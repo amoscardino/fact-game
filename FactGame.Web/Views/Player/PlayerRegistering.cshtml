@@ -1,0 +1,87 @@
+﻿@model PlayerRegisteringViewModel
+
+<h1 class="display-4">
+    Game: @Model.GameName
+</h1>
+
+@if (string.IsNullOrWhiteSpace(Model.PlayerID))
+{
+    <p class="lead">
+        Welcome! To register for this game, fill out the form below. Once you are finished, you will be able to update your information until the game admin starts the voting stage. Then you can return to this page and cast your votes.
+    </p>
+}
+else
+{
+    <p class="lead">
+        Welcome! You are already registered for this game. You may update your information below until the game admin starts the voting stage. Then you can return to this page and cast your votes.
+    </p>
+}
+
+<div class="row justify-content-center">
+    <div class="col-sm-6">
+        <form asp-controller="Player"
+              asp-action="Register"
+              method="post"
+              class="card">
+
+            <div class="card-header">
+                Player
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="form-text text-danger"></span>
+                    <span class="form-text">
+                        This will be visible to other players.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Symbol"></label>
+                    <input asp-for="Symbol" class="form-control" />
+                    <span asp-validation-for="Symbol" class="form-text text-danger"></span>
+                    <span class="form-text">
+                        Go <a href="https://fontawesome.com/icons?d=gallery&m=free" target="_blank">here</a> to choose your symbol. Copy the <strong>class name only</strong> into this field. This will be used to show your votes to other players.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ColorCode"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">#</span>
+                        </div>
+
+                        <input asp-for="ColorCode" class="form-control" />
+                    </div>
+                    <span asp-validation-for="ColorCode" class="form-text text-danger"></span>
+                    <span class="form-text">
+                        This will be the color of your symbol.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Fact"></label>
+                    <textarea asp-for="Fact" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Fact" class="form-text text-danger"></span>
+                    <span class="form-text">
+                        Provide an interesting fact about yourself that no other player knows.
+                    </span>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" asp-for="GameID" />
+            <input type="hidden" asp-for="PlayerID" />
+        </form>
+    </div>
+</div>

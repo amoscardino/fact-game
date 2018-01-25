@@ -1,0 +1,121 @@
+﻿@model AdminRegisteringViewModel
+
+<h1 class="display-4">
+    Game: @Model.Name
+</h1>
+
+<p class="lead">
+    <strong>Status:</strong>
+    Registering
+</p>
+
+<p>
+    Your game is now registering players. Send them the Player URL below to have them sign up.
+    Click the "Start Voting" button below to end registration and allow players to start voting.
+</p>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-4">
+        <h2>
+            Game Admin
+        </h2>
+
+        @if (Model.Players.Count() > 3)
+        {
+            <form asp-controller="Admin"
+                  asp-action="ChangeStatus"
+                  asp-route-id="@Model.GameID"
+                  asp-route-admintoken="@Model.AdminToken"
+                  asp-route-newstatus="1" @* Voting *@
+                  class="my-3">
+                <button class="btn btn-primary btn-block btn-lg">
+                    Start Voting
+                </button>
+            </form>
+        }
+        else
+        {
+            <p>
+                You need at least 3 players to register to start voting. The game works best with about 12-30 players.
+            </p>
+        }
+    </div>
+
+    <div class="col-sm-8">
+        <h2>URLs</h2>
+
+        <div class="form-group">
+            <label for="PlayerUrl">
+                Player URL
+            </label>
+
+            <input type="text"
+                   readonly
+                   class="form-control"
+                   id="PlayerUrl"
+                   value="@Url.Action("Index", "Player", new { id = Model.GameID }, Context.Request.Scheme, null)">
+
+            <small class="form-text text-muted">
+                Send this to your players. This URL will remain the same when voting has started and ended.
+            </small>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+            <label for="AdminUrl">
+                Admin URL
+            </label>
+
+            <input type="text"
+                   readonly
+                   class="form-control"
+                   id="AdminUrl"
+                   value="@Url.Action("Index", "Admin", new { id = Model.GameID, adminToken = Model.AdminToken }, Context.Request.Scheme, null)">
+
+            <small class="form-text text-muted">
+                <strong class="text-danger">DO NOT</strong> send this URL to your players. Keep it to yourself!
+            </small>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<h2>Players</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th class="text-right">Symbol</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var player in Model.Players)
+        {
+            <tr>
+                <td>
+                    @player.Name
+                </td>
+
+                <td class="text-right" style="color: #@player.Color">
+                    <i class="@player.Symbol"></i>
+                </td>
+            </tr>
+        }
+
+        @if (!Model.Players.Any())
+        {
+
+            <tr>
+                <td colspan="3" class="text-muted text-center">
+                    No players registered (yet)!
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

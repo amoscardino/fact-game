@@ -1,0 +1,90 @@
+﻿
+<div class="row mb-4">
+    <div class="col-sm-8">
+        <h1 class="display-4">
+            Fact Game
+        </h1>
+
+        <p class="lead">A team-building game.</p>
+    </div>
+
+    <div class="col-sm-4">
+        @Html.Partial("_CreateGameForm", new CreateGameViewModel())
+    </div>
+</div>
+
+<h2>How It Works</h2>
+
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <div class="card">
+            <div class="card-header">Step 1: Create a Game</div>
+            <div class="card-body text-center">
+                <p class="text-primary">
+                    <i class="fas fa-plus-circle fa-5x"></i>
+                </p>
+
+                <p>
+                    Use the form above to make your game. You are now the game admin and have access to the admin page.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+        <div class="card">
+            <div class="card-header">Step 2: Register Players</div>
+            <div class="card-body text-center">
+                <p class="text-warning">
+                    <i class="fas fa-edit fa-5x"></i>
+                </p>
+
+                <p>
+                    Once you have a game, you will get a URL to send to your players.
+                </p>
+
+                <p>
+                    Players sign up by proving a little information, including an interesting fact about themselves that no other player knows.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+        <div class="card">
+            <div class="card-header">Step 3: Vote!</div>
+            <div class="card-body text-center">
+                <p class="text-danger">
+                    <i class="fas fa-check fa-5x"></i>
+                </p>
+
+                <p>
+                    The game admin can start voting at any time. It works best when you have aroug 12-30 players.
+                </p>
+
+                <p>
+                    Once voting starts, each player returns using the same URL that they used for registration. They will then attempt to guess which fact goes with which player.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-3">
+        <div class="card">
+            <div class="card-header">Step 4: Results</div>
+            <div class="card-body text-center">
+                <p class="text-success">
+                    <i class="fas fa-trophy fa-5x"></i>
+                </p>
+
+                <p>
+                    Once all the votes are in, the game admin can end voting the close the game.
+                </p>
+
+                <p>
+                    The game is then scored and you can see how everyone did!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

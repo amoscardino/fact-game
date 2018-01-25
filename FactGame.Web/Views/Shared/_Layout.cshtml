@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Fact Game</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous" />
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+</head>
+
+<body class="bg-light">
+    <header class="mb-5">
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="navbar-brand">
+                    Fact Game
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    @if (ViewData["SkipContainer"] != null && ((bool)ViewData["SkipContainer"]))
+    {
+        <main>
+            @RenderBody()
+        </main>
+
+        <footer class="container">
+            <hr />
+            <p>&copy; 2018 - Andrew Moscardino</p>
+        </footer>
+    }
+    else
+    {
+        <div class="container">
+            <main>
+                @RenderBody()
+            </main>
+
+            <footer class="text-center text-muted">
+                <hr />
+                <p>&copy; 2018 - Andrew Moscardino</p>
+            </footer>
+        </div>
+    }
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

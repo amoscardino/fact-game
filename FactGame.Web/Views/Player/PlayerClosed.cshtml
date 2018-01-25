@@ -1,0 +1,85 @@
+﻿@model PlayerClosedViewModel
+
+<h1 class="display-4">
+    Game: @Model.GameName
+</h1>
+
+<p class="lead">
+    Voting has now closed. Let's see how well you did!
+</p>
+
+<h2>Scoring</h2>
+
+<p>Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Votes.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.</p>
+
+<h2>Your Results</h2>
+
+<div class="row">
+    <div class="col-sm-4 d-flex align-items-stretch">
+        <div class="card mb-4 w-100">
+            <div class="card-header">
+                Score
+            </div>
+
+            <div class="card-body text-center">
+                <div class="display-3">
+                    @Model.Score.ToString("N2")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8 d-flex align-items-stretch">
+        <div class="card mb-4 w-100 @(Model.FactGuessedByPlayerNames.Any() ? "border-danger" : "border-success")">
+            <div class="card-header">
+                Your Fact
+            </div>
+
+            <div class="card-body">
+                <p>@Model.Fact</p>
+
+                <hr />
+
+                @if (Model.FactGuessedByPlayerNames.Any())
+                {
+                    <p>
+                        Your fact was guessed by: @string.Join(", ", Model.FactGuessedByPlayerNames)
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        No other player guessed your fact so you get the full points for it. Nice job!
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<h2>Your Votes</h2>
+
+<div class="row">
+    @foreach (var vote in Model.Votes)
+    {
+        <div class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
+            <div class="card mb-4 w-100 @(vote.Correct ? "border-success" : "border-danger")">
+                <div class="card-body">
+                    <p>
+                        @vote.Fact
+                    </p>
+
+                    <hr />
+
+                    <p>
+                        You guessed: @vote.GuessPlayerName
+                        <br />
+                        It was actually: @vote.ActualPlayerName
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

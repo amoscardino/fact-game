@@ -1,0 +1,137 @@
+﻿@model AdminVotingViewModel
+
+@{
+    ViewData["SkipContainer"] = true;
+}
+
+<div class="container">
+    <h1 class="display-4">
+        Game: @Model.Name
+    </h1>
+
+    <p class="lead">
+        <strong>Status:</strong>
+        Voting
+    </p>
+
+    <p>
+        Players are now voting. They will attempt to match each fact to another player. You can see the current votes below.
+    </p>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>
+                Game Admin
+            </h2>
+
+            <form asp-controller="Admin"
+                  asp-action="ChangeStatus"
+                  asp-route-id="@Model.GameID"
+                  asp-route-admintoken="@Model.AdminToken"
+                  asp-route-newstatus="2" @* Closed *@
+                  class="my-3">
+                <button class="btn btn-danger btn-block btn-lg">
+                    Close Voting
+                </button>
+            </form>
+        </div>
+
+        <div class="col-sm-8">
+            <h2>URLs</h2>
+
+            <div class="form-group">
+                <label for="PlayerUrl">
+                    Player URL
+                </label>
+
+                <input type="text"
+                       readonly
+                       class="form-control"
+                       id="PlayerUrl"
+                       value="@Url.Action("Index", "Player", new { id = Model.GameID }, Context.Request.Scheme, null)">
+
+                <small class="form-text text-muted">
+                    Send this to your players. This URL will remain the same when voting has ended.
+                </small>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <label for="AdminUrl">
+                    Admin URL
+                </label>
+
+                <input type="text"
+                       readonly
+                       class="form-control"
+                       id="AdminUrl"
+                       value="@Url.Action("Index", "Admin", new { id = Model.GameID, adminToken = Model.AdminToken }, Context.Request.Scheme, null)">
+
+                <small class="form-text text-muted">
+                    <strong class="text-danger">DO NOT</strong> send this URL to your players. Keep it to yourself!
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <h2>Votes</h2>
+</div>
+
+<div class="container-fluid">
+    <table class="table table-bordered @(Model.Facts.Count >= 10 ? "table-sm" : string.Empty)"
+           style="table-layout: fixed;">
+        <colgroup>
+            <col style="width: 20%;" />
+
+            @foreach (var player in Model.Facts)
+            {
+                <col style="width: auto;" />
+            }
+        </colgroup>
+
+        <thead>
+            <tr>
+                <th></th>
+
+                @foreach (var player in Model.Facts.First().Players)
+                {
+                    <th class="text-center align-bottom">
+                        @player.PlayerName
+                        <br />
+                        <span style="color: #@player.ColorCode">
+                            <i class="@player.Symbol"></i>
+                        </span>
+                    </th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var fact in Model.Facts)
+            {
+                <tr>
+                    <th class="align-middle">
+                        @fact.Fact
+                    </th>
+
+                    @foreach (var player in fact.Players)
+                    {
+                        <td class="text-center align-middle">
+                            @foreach (var vote in player.Votes)
+                            {
+                                <span style="color: #@vote.ColorCode" title="@vote.PlayerName">
+                                    <i class="@vote.Symbol"></i>
+                                </span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
