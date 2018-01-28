@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataModels;
 using FactGame.Web.Models;
 using Dapper;
-using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace FactGame.Web.Controllers
 {
@@ -48,7 +48,7 @@ namespace FactGame.Web.Controllers
             }
         }
 
-        private async Task<IActionResult> AdminRegistering(SqliteConnection conn, Game game)
+        private async Task<IActionResult> AdminRegistering(IDbConnection conn, Game game)
         {
             var sql = @"select * from Player where GameID = @GameID order by ID";
 
@@ -64,7 +64,7 @@ namespace FactGame.Web.Controllers
             return View("AdminRegistering", vm);
         }
 
-        private async Task<IActionResult> AdminVoting(SqliteConnection conn, Game game)
+        private async Task<IActionResult> AdminVoting(IDbConnection conn, Game game)
         {
             var playersSql = @"select * from Player where GameID = @GameID order by ID";
             var votesSql = @"select p.Name as PlayerName, p.Symbol as Symbol, p.Color as ColorCode
@@ -128,7 +128,7 @@ namespace FactGame.Web.Controllers
             return View("AdminVoting", vm);
         }
 
-        private async Task<IActionResult> AdminClosed(SqliteConnection conn, Game game)
+        private async Task<IActionResult> AdminClosed(IDbConnection conn, Game game)
         {
             var playersSql = @"select * from Player where GameID = @ID order by ID";
             var votesSql = @"select p.Name as PlayerName, p.Symbol as Symbol, p.Color as ColorCode
@@ -220,7 +220,7 @@ namespace FactGame.Web.Controllers
             }
         }
 
-        private async Task ScoreGame(SqliteConnection conn, string id)
+        private async Task ScoreGame(IDbConnection conn, string id)
         {
             var playersSql = @"select * from Player where GameID = @id";
             var votesSql = @"select * from Vote where VoterPlayerID in @PlayerIDs";

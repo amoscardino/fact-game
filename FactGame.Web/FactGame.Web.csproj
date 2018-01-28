@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="App_Data\FactGame.sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Data\FactGame.sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.4" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="System.Data.Sqlite" Version="1.0.106" />

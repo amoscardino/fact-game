@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataModels;
 using FactGame.Web.Models;
 using Dapper;
-using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
+using System.Data;
 
 namespace FactGame.Web.Controllers
 {
@@ -50,7 +50,7 @@ namespace FactGame.Web.Controllers
             }
         }
 
-        private async Task<IActionResult> PlayerRegistering(SqliteConnection conn, Game game)
+        private async Task<IActionResult> PlayerRegistering(IDbConnection conn, Game game)
         {
             var vm = new PlayerRegisteringViewModel
             {
@@ -80,7 +80,7 @@ namespace FactGame.Web.Controllers
             return View("PlayerRegistering", vm);
         }
 
-        private async Task<IActionResult> PlayerVoting(SqliteConnection conn, Game game)
+        private async Task<IActionResult> PlayerVoting(IDbConnection conn, Game game)
         {
             var vm = new PlayerVotingViewModel
             {
@@ -126,7 +126,7 @@ namespace FactGame.Web.Controllers
             return View("PlayerVoting", vm);
         }
 
-        private async Task<IActionResult> PlayerClosed(SqliteConnection conn, Game game)
+        private async Task<IActionResult> PlayerClosed(IDbConnection conn, Game game)
         {
             var vm = new PlayerClosedViewModel
             {
