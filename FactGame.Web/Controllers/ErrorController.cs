@@ -9,11 +9,8 @@ using FactGame.Web.Models;
 
 namespace FactGame.Web.Controllers
 {
-    public class ErrorController : BaseController
+    public class ErrorController : Controller
     {
-        public ErrorController(IHostingEnvironment hostingEnvironment)
-            : base(hostingEnvironment) { }
-
         [Route("/error")]
         public IActionResult Index()
         {

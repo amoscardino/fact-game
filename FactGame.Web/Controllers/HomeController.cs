@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataModels;
 using FactGame.Web.Models;
-using Dapper;
+using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 
 namespace FactGame.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(IHostingEnvironment hostingEnvironment)
-            : base(hostingEnvironment) { }
+        public HomeController(IConfiguration config) : base(config) { }
 
         public IActionResult Index()
         {
@@ -23,24 +23,16 @@ namespace FactGame.Web.Controllers
 
         public async Task<IActionResult> CreateGame(CreateGameViewModel model)
         {
-            var sql = @"insert into Game (ID, AdminToken, Name, Status) values (@ID, @AdminToken, @Name, @Status)";
-
-            using (var conn = await GetDatabaseConnection())
+            var game = new Game
             {
-                conn.Open();
+                ID = ObjectId.GenerateNewId(),
+                Name = model.Name,
+                AdminToken = ObjectId.GenerateNewId()
+            };
 
-                var game = new Game
-                {
-                    ID = GetNewID(),
-                    AdminToken = GetNewID(),
-                    Name = model.Name,
-                    Status = 0
-                };
+            await UpdateGameAsync(game);
 
-                await conn.ExecuteAsync(sql, game);
-
-                return RedirectToAction("Index", "Admin", new { game.ID, game.AdminToken });
-            }
+            return RedirectToAction("Index", "Admin", new { game.ID, game.AdminToken });
         }
     }
 }

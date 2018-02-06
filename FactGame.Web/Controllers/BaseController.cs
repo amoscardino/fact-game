@@ -4,64 +4,45 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Threading.Tasks;
-using Dapper;
-using System.Data;
+using Microsoft.Extensions.Configuration;
+using FactGame.Web.DataModels;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using System.Linq;
 
 namespace FactGame.Web.Controllers
 {
     public class BaseController : Controller
     {
-        private const string SCHEMA_SQL = @"CREATE TABLE IF NOT EXISTS `Vote` (
-                                                `VoterPlayerID`	TEXT NOT NULL,
-                                                `FactID`	TEXT NOT NULL,
-                                                `GuessPlayerID`	TEXT NOT NULL,
-                                                FOREIGN KEY(`VoterPlayerID`) REFERENCES `Player`(`ID`),
-                                                FOREIGN KEY(`FactID`) REFERENCES `Player`(`FactID`),
-                                                FOREIGN KEY(`GuessPlayerID`) REFERENCES `Player`(`ID`),
-                                                PRIMARY KEY(`VoterPlayerID`,`FactID`)
-                                            );
-                                            CREATE TABLE IF NOT EXISTS `Player` (
-                                                `ID`	TEXT NOT NULL UNIQUE,
-                                                `GameID`	TEXT NOT NULL,
-                                                `Name`	TEXT NOT NULL,
-                                                `Symbol`	TEXT NOT NULL,
-                                                `Color`	TEXT NOT NULL,
-                                                `Fact`	TEXT NOT NULL,
-                                                `FactID`	TEXT NOT NULL UNIQUE,
-                                                `Score`	NUMERIC DEFAULT 0,
-                                                FOREIGN KEY(`GameID`) REFERENCES `Game`(`ID`),
-                                                PRIMARY KEY(`ID`)
-                                            );
-                                            CREATE TABLE IF NOT EXISTS `Game` (
-                                                `ID`	TEXT NOT NULL UNIQUE,
-                                                `AdminToken`	TEXT NOT NULL,
-                                                `Name`	TEXT NOT NULL,
-                                                `Status`	INTEGER NOT NULL,
-                                                PRIMARY KEY(`ID`)
-                                            );";
+        private IConfiguration _config;
 
-        private IHostingEnvironment _HostingEnvironment;
-
-        public BaseController(IHostingEnvironment hostingEnvironment)
+        public BaseController(IConfiguration config)
         {
-            _HostingEnvironment = hostingEnvironment;
+            _config = config;
         }
 
-        protected async Task<IDbConnection> GetDatabaseConnection()
+        protected async Task<Game> GetGameAsync(string id)
         {
-            var databasePath = Path.Combine(_HostingEnvironment.ContentRootPath, "App_Data", "FactGame.sqlite");
-            var connectionString = "Data Source=" + databasePath;
+            var collection = GetCollection();
+            var gameId = ObjectId.Parse(id);
 
-            var connection = new SqliteConnection(connectionString);
-            
-            await connection.ExecuteAsync(SCHEMA_SQL);
-
-            return connection;
+            return await collection.Find(x => x.ID == gameId).FirstOrDefaultAsync();
         }
 
-        protected string GetNewID()
+        protected async Task UpdateGameAsync(Game game)
         {
-            return Guid.NewGuid().ToString().Replace("-", "");
+            var collection = GetCollection();
+
+            await collection.ReplaceOneAsync(x => x.ID == game.ID, game, new UpdateOptions { IsUpsert = true });
+        }
+
+        private IMongoCollection<Game> GetCollection()
+        {
+            var client = new MongoClient(_config.GetConnectionString("FactGameData"));
+            var database = client.GetDatabase("factgame");
+            var collection = database.GetCollection<Game>("games");
+
+            return collection;
         }
     }
 }

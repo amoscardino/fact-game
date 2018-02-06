@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +9,8 @@ namespace FactGame.Web.DataModels
 {
     public class Player
     {
-        public string ID { get; set; }
-
-        public string GameID { get; set; }
+        [BsonId]
+        public ObjectId ID { get; set; }
 
         public string Name { get; set; }
 
@@ -19,8 +20,15 @@ namespace FactGame.Web.DataModels
 
         public string Fact { get; set; }
 
-        public string FactID { get; set; }
+        public ObjectId FactID { get; set; }
 
         public decimal Score { get; set; }
+
+        public List<Vote> Votes { get; set; }
+
+        public Player()
+        {
+            Votes = new List<Vote>();
+        }
     }
 }

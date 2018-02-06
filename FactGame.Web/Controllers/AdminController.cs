@@ -7,93 +7,77 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataModels;
 using FactGame.Web.Models;
-using Dapper;
 using System.Data;
+using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 
 namespace FactGame.Web.Controllers
 {
     public class AdminController : BaseController
     {
         #region Constructor
-        public AdminController(IHostingEnvironment hostingEnvironment)
-            : base(hostingEnvironment) { }
+        public AdminController(IConfiguration config)
+            : base(config) { }
         #endregion
 
         #region Action: Index
         [HttpGet, Route("/game/{id}/admin/{adminToken}")]
         public async Task<IActionResult> Index(string id, string adminToken)
         {
-            var gameSql = @"select * from Game where ID = @ID and AdminToken = @AdminToken";
+            var game = await GetGameAsync(id);
 
-            using (var conn = await GetDatabaseConnection())
+            if (game == null || game.AdminToken != ObjectId.Parse(adminToken))
+                return NotFound("Game not found.");
+
+            switch (game.Status)
             {
-                conn.Open();
-
-                var game = await conn.QuerySingleOrDefaultAsync<Game>(gameSql, new { ID = id, AdminToken = adminToken });
-
-                if (game == null)
-                    return NotFound("Game not found.");
-
-                switch (game.Status)
-                {
-                    case 0:
-                        return await AdminRegistering(conn, game);
-                    case 1:
-                        return await AdminVoting(conn, game);
-                    case 2:
-                        return await AdminClosed(conn, game);
-                    default:
-                        throw new ArgumentOutOfRangeException("Unknown game status");
-                }
+                case 0:
+                    return AdminRegistering(game);
+                case 1:
+                    return AdminVoting(game);
+                case 2:
+                    return AdminClosed(game);
+                default:
+                    throw new ArgumentOutOfRangeException("Unknown game status");
             }
         }
 
-        private async Task<IActionResult> AdminRegistering(IDbConnection conn, Game game)
+        private IActionResult AdminRegistering(Game game)
         {
-            var sql = @"select * from Player where GameID = @GameID order by ID";
-
             var vm = new AdminRegisteringViewModel
             {
                 Name = game.Name,
-                GameID = game.ID,
-                AdminToken = game.AdminToken
+                GameID = game.ID.ToString(),
+                AdminToken = game.AdminToken.ToString(),
+                Players = game.Players
             };
-
-            vm.Players = await conn.QueryAsync<Player>(sql, new { vm.GameID });
 
             return View("AdminRegistering", vm);
         }
 
-        private async Task<IActionResult> AdminVoting(IDbConnection conn, Game game)
+        private IActionResult AdminVoting(Game game)
         {
-            var playersSql = @"select * from Player where GameID = @GameID order by ID";
-            var votesSql = @"select p.Name as PlayerName, p.Symbol as Symbol, p.Color as ColorCode
-                             from Vote v
-                             join Player p on v.VoterPlayerID = p.ID
-                             where v.GuessPlayerID = @PlayerID and v.FactID = @FactID";
-
             var vm = new AdminVotingViewModel
             {
                 Name = game.Name,
-                GameID = game.ID,
-                AdminToken = game.AdminToken
+                GameID = game.ID.ToString(),
+                AdminToken = game.AdminToken.ToString()
             };
 
-            var players = await conn.QueryAsync<Player>(playersSql, new { vm.GameID });
-
-            vm.Facts = players
+            vm.Facts = game.Players
                 .OrderBy(p => p.FactID)
                 .Select(p => new AdminVotingFactViewModel
                 {
                     Fact = p.Fact,
-                    FactID = p.FactID
+                    FactID = p.FactID.ToString()
                 })
                 .ToList();
 
-            vm.Players = players
+            vm.Players = game.Players
                 .OrderBy(p => p.Name)
                 .Select(p => new AdminVotingPlayerViewModel
                 {
+                    PlayerID = p.ID.ToString(),
                     PlayerName = p.Name,
                     Symbol = p.Symbol,
                     ColorCode = p.Color
@@ -102,63 +86,54 @@ namespace FactGame.Web.Controllers
 
             foreach (var vmFact in vm.Facts)
             {
-                vmFact.Players = players
+                vmFact.Players = game.Players
                     .OrderBy(p => p.Name)
                     .Select(p => new AdminVotingPlayerViewModel
                     {
-                        PlayerID = p.ID,
+                        PlayerID = p.ID.ToString(),
                         PlayerName = p.Name,
                         Symbol = p.Symbol,
-                        ColorCode = p.Color
+                        ColorCode = p.Color,
+                        Votes = game.Players
+                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID.ToString() == vmFact.FactID))
+                            .Select(q => new AdminVotingVoteViewModel
+                            {
+                                PlayerName = q.Name,
+                                Symbol = q.Symbol,
+                                ColorCode = q.Color
+                            })
+                            .ToList()
                     })
                     .ToList();
-
-                foreach (var vmPlayer in vmFact.Players)
-                {
-                    var parameters = new
-                    {
-                        vmPlayer.PlayerID,
-                        vmFact.FactID
-                    };
-
-                    vmPlayer.Votes = (await conn.QueryAsync<AdminVotingVoteViewModel>(votesSql, parameters)).ToList();
-                }
             }
 
             return View("AdminVoting", vm);
         }
 
-        private async Task<IActionResult> AdminClosed(IDbConnection conn, Game game)
+        private IActionResult AdminClosed(Game game)
         {
-            var playersSql = @"select * from Player where GameID = @ID order by ID";
-            var votesSql = @"select p.Name as PlayerName, p.Symbol as Symbol, p.Color as ColorCode
-                             from Vote v
-                             join Player p on v.VoterPlayerID = p.ID
-                             where v.GuessPlayerID = @PlayerID and v.FactID = @FactID";
-
             var vm = new AdminClosedViewModel
             {
                 Name = game.Name,
-                GameID = game.ID,
-                AdminToken = game.AdminToken
+                GameID = game.ID.ToString(),
+                AdminToken = game.AdminToken.ToString()
             };
 
-            var players = await conn.QueryAsync<Player>(playersSql, new { game.ID });
-
-            vm.Facts = players
+            vm.Facts = game.Players
                 .OrderBy(p => p.FactID)
                 .Select(p => new AdminClosedFactViewModel
                 {
                     Fact = p.Fact,
-                    FactID = p.FactID,
-                    PlayerID = p.ID
+                    FactID = p.FactID.ToString(),
+                    PlayerID = p.ID.ToString()
                 })
                 .ToList();
 
-            vm.Players = players
+            vm.Players = game.Players
                 .OrderBy(p => p.Name)
                 .Select(p => new AdminClosedPlayerViewModel
                 {
+                    PlayerID = p.ID.ToString(),
                     PlayerName = p.Name,
                     Symbol = p.Symbol,
                     ColorCode = p.Color,
@@ -168,27 +143,25 @@ namespace FactGame.Web.Controllers
 
             foreach (var vmFact in vm.Facts)
             {
-                vmFact.Players = players
+                vmFact.Players = game.Players
                     .OrderBy(p => p.Name)
                     .Select(p => new AdminClosedPlayerViewModel
                     {
-                        PlayerID = p.ID,
+                        PlayerID = p.ID.ToString(),
                         PlayerName = p.Name,
                         Symbol = p.Symbol,
-                        ColorCode = p.Color
+                        ColorCode = p.Color,
+                        Votes = game.Players
+                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID.ToString() == vmFact.FactID))
+                            .Select(q => new AdminClosedVoteViewModel
+                            {
+                                PlayerName = q.Name,
+                                Symbol = q.Symbol,
+                                ColorCode = q.Color
+                            })
+                            .ToList()
                     })
                     .ToList();
-
-                foreach (var vmPlayer in vmFact.Players)
-                {
-                    var parameters = new
-                    {
-                        vmPlayer.PlayerID,
-                        vmFact.FactID
-                    };
-
-                    vmPlayer.Votes = (await conn.QueryAsync<AdminClosedVoteViewModel>(votesSql, parameters)).ToList();
-                }
             }
 
             return View("AdminClosed", vm);
@@ -199,50 +172,32 @@ namespace FactGame.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeStatus(string id, string adminToken, int newStatus)
         {
-            var sql = @"update Game set Status = @Status where ID = @ID and AdminToken = @AdminToken";
+            var game = await GetGameAsync(id);
 
-            using (var conn = await GetDatabaseConnection())
-            {
-                conn.Open();
+            // Score the game if we are closing it
+            if (newStatus == 2)
+                ScoreGame(game);
 
-                // Score the game if we are closing it
-                if (newStatus == 2)
-                    await ScoreGame(conn, id);
+            game.Status = newStatus;
 
-                await conn.ExecuteAsync(sql, new
-                {
-                    Status = newStatus,
-                    ID = id,
-                    AdminToken = adminToken
-                });
+            await UpdateGameAsync(game);
 
-                return RedirectToAction("Index", "Admin", new { id, adminToken });
-            }
+            return RedirectToAction("Index", "Admin", new { id, adminToken });
         }
 
-        private async Task ScoreGame(IDbConnection conn, string id)
+        private void ScoreGame(Game game)
         {
-            var playersSql = @"select * from Player where GameID = @id";
-            var votesSql = @"select * from Vote where VoterPlayerID in @PlayerIDs";
-            var playerUpdateSql = @"update Player set Score = @Score where ID = @ID";
+            var maxScore = game.Players.Count();
 
-            var players = await conn.QueryAsync<Player>(playersSql, new { id });
-            var votes = await conn.QueryAsync<Vote>(votesSql, new { PlayerIDs = players.Select(p => p.ID) });
-
-            var maxScore = players.Count();
-
-            // Reset any old scores
-            foreach (var player in players)
+            // Reset any old scores first
+            foreach (var player in game.Players)
                 player.Score = 0;
-
-            // Calculate scores
-            foreach (var player in players)
+            
+            foreach (var player in game.Players)
             {
-                var correctPlayers = (from vote in votes
-                                      join play in players on vote.VoterPlayerID equals play.ID
-                                      where vote.GuessPlayerID == player.ID
-                                      where vote.FactID == player.FactID
-                                      select play).ToList();
+                var correctPlayers = game.Players
+                        .Where(x => x.Votes.Any(y => player.ID == y.GuessPlayerID && player.FactID == y.FactID))
+                        .ToList();
 
                 if (correctPlayers.Any())
                 {
@@ -252,10 +207,6 @@ namespace FactGame.Web.Controllers
                 else
                     player.Score += maxScore;
             }
-
-            // Save scores to DB
-            foreach (var player in players)
-                await conn.ExecuteAsync(playerUpdateSql, new { player.Score, player.ID });
         }
         #endregion
     }
