@@ -11,7 +11,8 @@ namespace FactGame.Web
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; private set; }
+        public IHostingEnvironment Environment { get; private set; }
 
         public Startup(IHostingEnvironment env)
         {
@@ -24,18 +25,17 @@ namespace FactGame.Web
                 builder.AddUserSecrets<Startup>();
 
             Configuration = builder.Build();
+            Environment = env;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
                 app.UseExceptionHandler("/error");

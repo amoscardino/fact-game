@@ -8,8 +8,8 @@ namespace FactGame.Web.DataModels
 {
     public class Vote
     {
-        public ObjectId FactID { get; set; }
+        public string FactID { get; set; }
 
-        public ObjectId GuessPlayerID { get; set; }
+        public string GuessPlayerID { get; set; }
     }
 }

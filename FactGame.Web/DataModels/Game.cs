@@ -10,16 +10,16 @@ namespace FactGame.Web.DataModels
     public class Game
     {
         [BsonId]
-        public ObjectId ID { get; set; }
+        public string ID { get; set; }
 
-        public ObjectId AdminToken { get; set; }
+        public string AdminToken { get; set; }
 
         public string Name { get; set; }
 
         /// <summary>
         /// 0 = Registering
         /// 1 = Voting
-        /// 2 = CLosed
+        /// 2 = Closed
         /// </summary>
         public int Status { get; set; }
 

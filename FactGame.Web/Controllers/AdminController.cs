@@ -26,7 +26,7 @@ namespace FactGame.Web.Controllers
         {
             var game = await GetGameAsync(id);
 
-            if (game == null || game.AdminToken != ObjectId.Parse(adminToken))
+            if (game == null || game.AdminToken != adminToken)
                 return NotFound("Game not found.");
 
             switch (game.Status)
@@ -47,8 +47,8 @@ namespace FactGame.Web.Controllers
             var vm = new AdminRegisteringViewModel
             {
                 Name = game.Name,
-                GameID = game.ID.ToString(),
-                AdminToken = game.AdminToken.ToString(),
+                GameID = game.ID,
+                AdminToken = game.AdminToken,
                 Players = game.Players
             };
 
@@ -60,8 +60,8 @@ namespace FactGame.Web.Controllers
             var vm = new AdminVotingViewModel
             {
                 Name = game.Name,
-                GameID = game.ID.ToString(),
-                AdminToken = game.AdminToken.ToString()
+                GameID = game.ID,
+                AdminToken = game.AdminToken
             };
 
             vm.Facts = game.Players
@@ -69,7 +69,7 @@ namespace FactGame.Web.Controllers
                 .Select(p => new AdminVotingFactViewModel
                 {
                     Fact = p.Fact,
-                    FactID = p.FactID.ToString()
+                    FactID = p.FactID
                 })
                 .ToList();
 
@@ -77,7 +77,7 @@ namespace FactGame.Web.Controllers
                 .OrderBy(p => p.Name)
                 .Select(p => new AdminVotingPlayerViewModel
                 {
-                    PlayerID = p.ID.ToString(),
+                    PlayerID = p.ID,
                     PlayerName = p.Name,
                     Symbol = p.Symbol,
                     ColorCode = p.Color
@@ -90,12 +90,12 @@ namespace FactGame.Web.Controllers
                     .OrderBy(p => p.Name)
                     .Select(p => new AdminVotingPlayerViewModel
                     {
-                        PlayerID = p.ID.ToString(),
+                        PlayerID = p.ID,
                         PlayerName = p.Name,
                         Symbol = p.Symbol,
                         ColorCode = p.Color,
                         Votes = game.Players
-                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID.ToString() == vmFact.FactID))
+                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID == vmFact.FactID))
                             .Select(q => new AdminVotingVoteViewModel
                             {
                                 PlayerName = q.Name,
@@ -115,8 +115,8 @@ namespace FactGame.Web.Controllers
             var vm = new AdminClosedViewModel
             {
                 Name = game.Name,
-                GameID = game.ID.ToString(),
-                AdminToken = game.AdminToken.ToString()
+                GameID = game.ID,
+                AdminToken = game.AdminToken
             };
 
             vm.Facts = game.Players
@@ -124,8 +124,8 @@ namespace FactGame.Web.Controllers
                 .Select(p => new AdminClosedFactViewModel
                 {
                     Fact = p.Fact,
-                    FactID = p.FactID.ToString(),
-                    PlayerID = p.ID.ToString()
+                    FactID = p.FactID,
+                    PlayerID = p.ID
                 })
                 .ToList();
 
@@ -133,7 +133,7 @@ namespace FactGame.Web.Controllers
                 .OrderBy(p => p.Name)
                 .Select(p => new AdminClosedPlayerViewModel
                 {
-                    PlayerID = p.ID.ToString(),
+                    PlayerID = p.ID,
                     PlayerName = p.Name,
                     Symbol = p.Symbol,
                     ColorCode = p.Color,
@@ -147,12 +147,12 @@ namespace FactGame.Web.Controllers
                     .OrderBy(p => p.Name)
                     .Select(p => new AdminClosedPlayerViewModel
                     {
-                        PlayerID = p.ID.ToString(),
+                        PlayerID = p.ID,
                         PlayerName = p.Name,
                         Symbol = p.Symbol,
                         ColorCode = p.Color,
                         Votes = game.Players
-                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID.ToString() == vmFact.FactID))
+                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID == vmFact.FactID))
                             .Select(q => new AdminClosedVoteViewModel
                             {
                                 PlayerName = q.Name,

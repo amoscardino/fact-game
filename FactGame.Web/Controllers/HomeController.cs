@@ -25,9 +25,9 @@ namespace FactGame.Web.Controllers
         {
             var game = new Game
             {
-                ID = ObjectId.GenerateNewId(),
+                ID = GetNewId(),
                 Name = model.Name,
-                AdminToken = ObjectId.GenerateNewId()
+                AdminToken = GetNewId()
             };
 
             await UpdateGameAsync(game);

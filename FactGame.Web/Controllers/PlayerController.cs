@@ -54,11 +54,11 @@ namespace FactGame.Web.Controllers
             {
                 var playerId = Request.Cookies["FactGameGame" + game.ID];
 
-                var player = game.Players.SingleOrDefault(p => p.ID.ToString() == playerId);
+                var player = game.Players.SingleOrDefault(p => p.ID == playerId);
 
                 if (player != null)
                 {
-                    vm.PlayerID = player.ID.ToString();
+                    vm.PlayerID = player.ID;
                     vm.Name = player.Name;
                     vm.Symbol = player.Symbol;
                     vm.ColorCode = player.Color;
@@ -83,7 +83,7 @@ namespace FactGame.Web.Controllers
                 return View("PlayerVotingNotRegistered", vm);
 
             var playerId = Request.Cookies["FactGameGame" + game.ID];
-            var player = game.Players.SingleOrDefault(p => p.ID.ToString() == playerId);
+            var player = game.Players.SingleOrDefault(p => p.ID == playerId);
 
             if (player == null)
                 return View("PlayerVotingNotRegistered", vm);
@@ -92,7 +92,7 @@ namespace FactGame.Web.Controllers
 
             vm.Players = game.Players
                     .OrderBy(p => p.Name)
-                    .Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name })
+                    .Select(p => new SelectListItem { Value = p.ID, Text = p.Name })
                     .ToList();
 
             vm.Votes = game.Players
@@ -100,10 +100,10 @@ namespace FactGame.Web.Controllers
                     .Select(p => new PlayerVoteViewModel
                     {
                         Fact = p.Fact,
-                        FactID = p.FactID.ToString(),
+                        FactID = p.FactID,
                         GuessPlayerID = player.Votes
                             .Where(x => x.FactID == p.FactID)
-                            .Select(x => x.GuessPlayerID.ToString())
+                            .Select(x => x.GuessPlayerID)
                             .SingleOrDefault()
                     })
                     .ToList();
@@ -124,7 +124,7 @@ namespace FactGame.Web.Controllers
                 return View("PlayerClosedNotRegistered", vm);
 
             var playerId = Request.Cookies["FactGameGame" + game.ID];
-            var player = game.Players.SingleOrDefault(p => p.ID.ToString() == playerId);
+            var player = game.Players.SingleOrDefault(p => p.ID == playerId);
 
             vm.Score = player.Score;
             vm.Fact = player.Fact;
@@ -157,11 +157,11 @@ namespace FactGame.Web.Controllers
 
             var game = await GetGameAsync(model.GameID);
 
-            var player = game.Players.SingleOrDefault(p => p.ID.ToString() == model.PlayerID);
+            var player = game.Players.SingleOrDefault(p => p.ID == model.PlayerID);
 
             if (player == null)
             {
-                player = new Player { ID = ObjectId.GenerateNewId() };
+                player = new Player { ID = GetNewId() };
                 game.Players.Add(player);
             }
 
@@ -169,7 +169,7 @@ namespace FactGame.Web.Controllers
             player.Symbol = model.Symbol;
             player.Color = model.ColorCode;
             player.Fact = model.Fact;
-            player.FactID = ObjectId.GenerateNewId();
+            player.FactID = GetNewId();
 
             await UpdateGameAsync(game);
 
@@ -184,7 +184,7 @@ namespace FactGame.Web.Controllers
                     Secure = Request.IsHttps
                 };
 
-                Response.Cookies.Append("FactGameGame" + model.GameID, player.ID.ToString(), cookieOptions);
+                Response.Cookies.Append("FactGameGame" + model.GameID, player.ID, cookieOptions);
             }
 
             return RedirectToAction("Index", "Player", new { id = model.GameID });
@@ -195,7 +195,7 @@ namespace FactGame.Web.Controllers
         public async Task<IActionResult> Vote(PlayerVotingViewModel model)
         {
             var game = await GetGameAsync(model.GameID);
-            var player = game.Players.SingleOrDefault(x => x.ID.ToString() == model.PlayerID);
+            var player = game.Players.SingleOrDefault(x => x.ID == model.PlayerID);
 
             if (player == null)
                 throw new InvalidOperationException("Invalid Player ID");
@@ -204,8 +204,8 @@ namespace FactGame.Web.Controllers
                 .Where(x => !string.IsNullOrWhiteSpace(x.GuessPlayerID))
                 .Select(x => new Vote
                 {
-                    FactID = ObjectId.Parse(x.FactID),
-                    GuessPlayerID = ObjectId.Parse(x.GuessPlayerID)
+                    FactID = x.FactID,
+                    GuessPlayerID = x.GuessPlayerID
                 })
                 .ToList();
 

@@ -10,7 +10,7 @@ namespace FactGame.Web.DataModels
     public class Player
     {
         [BsonId]
-        public ObjectId ID { get; set; }
+        public string ID { get; set; }
 
         public string Name { get; set; }
 
@@ -20,7 +20,7 @@ namespace FactGame.Web.DataModels
 
         public string Fact { get; set; }
 
-        public ObjectId FactID { get; set; }
+        public string FactID { get; set; }
 
         public decimal Score { get; set; }
 

@@ -21,12 +21,24 @@ namespace FactGame.Web.Controllers
             _config = config;
         }
 
+        /// <summary>
+        /// From: https://madskristensen.net/blog/A-shorter-and-URL-friendly-GUID
+        /// </summary>
+        /// <returns></returns>
+        protected string GetNewId()
+        {
+            var enc = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+            enc = enc.Replace("/", "_").Replace("+", "-");
+
+            return enc.Substring(0, 22);
+        }
+
         protected async Task<Game> GetGameAsync(string id)
         {
             var collection = GetCollection();
-            var gameId = ObjectId.Parse(id);
 
-            return await collection.Find(x => x.ID == gameId).FirstOrDefaultAsync();
+            return await collection.Find(x => x.ID == id).FirstOrDefaultAsync();
         }
 
         protected async Task UpdateGameAsync(Game game)
