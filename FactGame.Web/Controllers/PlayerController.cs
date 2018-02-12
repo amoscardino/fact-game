@@ -3,26 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using FactGame.Web.DataModels;
+using FactGame.Web.DataAccess.Models;
 using FactGame.Web.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
+using FactGame.Web.DataAccess;
 
 namespace FactGame.Web.Controllers
 {
-    public class PlayerController : BaseController
+    public class PlayerController : Controller
     {
+        #region Private Members
+        private IFactGameRepository _repo;
+        #endregion
+
         #region Constructor
-        public PlayerController(IConfiguration config) : base(config) { }
+        public PlayerController(IFactGameRepository repo)
+        {
+            _repo = repo;
+        }
         #endregion
 
         #region Action: Index
         [Route("/game/{id}")]
         public async Task<IActionResult> Index(string id)
         {
-            var game = await GetGameAsync(id);
+            var game = await _repo.GetGame(id);
 
             if (game == null)
                 return NotFound("Game not found.");
@@ -155,13 +163,13 @@ namespace FactGame.Web.Controllers
             if (!ModelState.IsValid)
                 return View("PlayerRegistering", model);
 
-            var game = await GetGameAsync(model.GameID);
+            var game = await _repo.GetGame(model.GameID);
 
             var player = game.Players.SingleOrDefault(p => p.ID == model.PlayerID);
 
             if (player == null)
             {
-                player = new Player { ID = GetNewId() };
+                player = new Player { ID = _repo.GetNewId() };
                 game.Players.Add(player);
             }
 
@@ -169,9 +177,9 @@ namespace FactGame.Web.Controllers
             player.Symbol = model.Symbol;
             player.Color = model.ColorCode;
             player.Fact = model.Fact;
-            player.FactID = GetNewId();
+            player.FactID = _repo.GetNewId();
 
-            await UpdateGameAsync(game);
+            await _repo.UpdateGame(game);
 
             var hasCookie = Request.Cookies.ContainsKey("FactGameGame" + model.GameID);
 
@@ -194,7 +202,7 @@ namespace FactGame.Web.Controllers
         #region Action: Vote
         public async Task<IActionResult> Vote(PlayerVotingViewModel model)
         {
-            var game = await GetGameAsync(model.GameID);
+            var game = await _repo.GetGame(model.GameID);
             var player = game.Players.SingleOrDefault(x => x.ID == model.PlayerID);
 
             if (player == null)
@@ -209,7 +217,7 @@ namespace FactGame.Web.Controllers
                 })
                 .ToList();
 
-            await UpdateGameAsync(game);
+            await _repo.UpdateGame(game);
 
             return RedirectToAction("Index", "Player", new { id = model.GameID });
         }

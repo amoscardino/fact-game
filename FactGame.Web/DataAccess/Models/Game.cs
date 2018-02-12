@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactGame.Web.DataModels
+namespace FactGame.Web.DataAccess.Models
 {
     public class Game
     {

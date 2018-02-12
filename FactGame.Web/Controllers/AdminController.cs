@@ -5,26 +5,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using FactGame.Web.DataModels;
+using FactGame.Web.DataAccess.Models;
 using FactGame.Web.Models;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
+using FactGame.Web.DataAccess;
 
 namespace FactGame.Web.Controllers
 {
-    public class AdminController : BaseController
+    public class AdminController : Controller
     {
+        #region Private Members
+        private IFactGameRepository _repo;
+        #endregion
+
         #region Constructor
-        public AdminController(IConfiguration config)
-            : base(config) { }
+        public AdminController(IFactGameRepository repo)
+        {
+            _repo = repo;
+        }
         #endregion
 
         #region Action: Index
         [HttpGet, Route("/game/{id}/admin/{adminToken}")]
         public async Task<IActionResult> Index(string id, string adminToken)
         {
-            var game = await GetGameAsync(id);
+            var game = await _repo.GetGame(id);
 
             if (game == null || game.AdminToken != adminToken)
                 return NotFound("Game not found.");
@@ -172,7 +179,7 @@ namespace FactGame.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeStatus(string id, string adminToken, int newStatus)
         {
-            var game = await GetGameAsync(id);
+            var game = await _repo.GetGame(id);
 
             // Score the game if we are closing it
             if (newStatus == 2)
@@ -180,7 +187,7 @@ namespace FactGame.Web.Controllers
 
             game.Status = newStatus;
 
-            await UpdateGameAsync(game);
+            await _repo.UpdateGame(game);
 
             return RedirectToAction("Index", "Admin", new { id, adminToken });
         }
@@ -192,7 +199,7 @@ namespace FactGame.Web.Controllers
             // Reset any old scores first
             foreach (var player in game.Players)
                 player.Score = 0;
-            
+
             foreach (var player in game.Players)
             {
                 var correctPlayers = game.Players

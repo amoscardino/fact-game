@@ -5,17 +5,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using FactGame.Web.DataModels;
+using FactGame.Web.DataAccess.Models;
 using FactGame.Web.Models;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
+using FactGame.Web.DataAccess;
 
 namespace FactGame.Web.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
-        public HomeController(IConfiguration config) : base(config) { }
+        #region Private Members
+        private IFactGameRepository _repo;
+        #endregion
 
+        #region Constructor
+        public HomeController(IFactGameRepository repo)
+        {
+            _repo = repo;
+        }
+        #endregion
+
+        #region Public Actions
         public IActionResult Index()
         {
             return View();
@@ -25,14 +36,15 @@ namespace FactGame.Web.Controllers
         {
             var game = new Game
             {
-                ID = GetNewId(),
+                ID = _repo.GetNewId(),
                 Name = model.Name,
-                AdminToken = GetNewId()
+                AdminToken = _repo.GetNewId()
             };
 
-            await UpdateGameAsync(game);
+            await _repo.UpdateGame(game);
 
             return RedirectToAction("Index", "Admin", new { game.ID, game.AdminToken });
         }
+        #endregion
     }
 }

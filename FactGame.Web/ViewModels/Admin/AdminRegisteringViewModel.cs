@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FactGame.Web.DataAccess.Models;
+using System;
 using System.Collections.Generic;
 
 namespace FactGame.Web.Models
@@ -11,6 +12,6 @@ namespace FactGame.Web.Models
 
         public string AdminToken { get; set; }
 
-        public IEnumerable<DataModels.Player> Players { get; set; }
+        public IEnumerable<Player> Players { get; set; }
     }
 }

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FactGame.Web.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +33,15 @@ namespace FactGame.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(opts =>
+            {
+                if (!Environment.IsDevelopment())
+                    opts.Filters.Add(new RequireHttpsAttribute());
+
+                opts.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
+
+            services.AddTransient<IFactGameRepository, MongoDbRepository>();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -38,7 +49,10 @@ namespace FactGame.Web
             if (Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
+            {
                 app.UseExceptionHandler("/error");
+                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
+            }
 
             app.UseStaticFiles();
 
