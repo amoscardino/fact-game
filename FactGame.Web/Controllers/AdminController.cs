@@ -216,5 +216,24 @@ namespace FactGame.Web.Controllers
             }
         }
         #endregion
+
+        #region Action: Remove Player
+        [HttpPost]
+        public async Task<IActionResult> RemovePlayer(string id, string adminToken, string playerId)
+        {
+            var game = await _repo.GetGame(id);
+
+            var player = game.Players.SingleOrDefault(p => p.ID == playerId);
+
+            if (player != null)
+            {
+                game.Players.Remove(player);
+
+                await _repo.UpdateGame(game);
+            }
+
+            return RedirectToAction("Index", "Admin", new { id, adminToken });
+        }
+        #endregion
     }
 }

@@ -90,7 +90,7 @@
     <thead>
         <tr>
             <th>Player</th>
-            <th class="text-right">Symbol</th>
+            <th></th>
         </tr>
     </thead>
 
@@ -99,12 +99,25 @@
         {
             <tr>
                 <td>
+                    <span style="color: #@player.Color">
+                        <i class="@player.Symbol"></i>
+                    </span>
+
                     @player.Name
                 </td>
 
-                <td class="text-right" style="color: #@player.Color">
-                    <i class="@player.Symbol"></i>
-                </td>
+                <th class="text-right">
+                    <form asp-action="RemovePlayer"
+                          asp-controller="Admin"
+                          asp-route-id="@Model.GameID"
+                          asp-route-admintoken="@Model.AdminToken"
+                          asp-route-playerid="@player.ID"
+                          method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            Remove
+                        </button>
+                    </form>
+                </th>
             </tr>
         }
 
