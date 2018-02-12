@@ -18,14 +18,12 @@
         Voting is now closed. See the results below.
     </p>
 
-    <h2>Scoring</h2>
-
-    <p>
-        Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
-    </p>
-
     <div class="row">
         <div class="col-sm-4">
+            <h2>
+                Game Admin
+            </h2>
+
             <form asp-controller="Admin"
                   asp-action="ChangeStatus"
                   asp-route-id="@Model.GameID"
@@ -57,7 +55,7 @@
                        value="@Url.Action("Index", "Player", new { id = Model.GameID }, Context.Request.Scheme, null)">
 
                 <small class="form-text text-muted">
-                    Send this to your players.
+                    Send this to your players. They can use it to see the results of their individual votes.
                 </small>
             </div>
 
@@ -80,6 +78,12 @@
             </div>
         </div>
     </div>
+
+    <h2>Scoring</h2>
+
+    <p>
+        Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
+    </p>
 
     <h2>Votes</h2>
 </div>
