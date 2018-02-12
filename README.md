@@ -4,7 +4,7 @@ This is the source for [FactGame](fact-game.azurewebsites.net).
 
 ## Database Set Up
 
-You will need a MongoDB instance somewhere. [mLab]() provides free ones. The database should be called `factgame`, and you need only one collection called `games`.
+You will need a MongoDB instance somewhere. [mLab](https://mlab.com/) provides free ones. The database should be called `factgame`, and you need only one collection called `games`.
 
 ## Running
 
