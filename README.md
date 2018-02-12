@@ -11,8 +11,11 @@ You will need a MongoDB instance somewhere. [mLab](https://mlab.com/) provides f
 1. Clone/Download the source.
 2. Open in Visual Studio.
 3. Configure User Secrets.
-	* In VS, right click `FactGame.Web` project and select "Manage User Secrets"
-	* Add something similar to the following:
+    * In VS, right click `FactGame.Web` project and select "Manage User Secrets"
+    * Add something similar to the sample below.
+4. Run it. 
+
+### Sample User Secrets
 ```
 {
     "ConnectionStrings": {
@@ -20,4 +23,3 @@ You will need a MongoDB instance somewhere. [mLab](https://mlab.com/) provides f
     }
 }
 ```
-4. Run it.
