@@ -18,14 +18,28 @@
         Voting is now closed. See the results below.
     </p>
 
+    <h2>Scoring</h2>
+
+    <p>
+        Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
+    </p>
 
     <div class="row">
         <div class="col-sm-4">
-            <h2>Scoring</h2>
+            <form asp-controller="Admin"
+                  asp-action="ChangeStatus"
+                  asp-route-id="@Model.GameID"
+                  asp-route-admintoken="@Model.AdminToken"
+                  asp-route-newstatus="1" @* Voting *@
+                  class="my-3">
+                <button class="btn btn-danger btn-block btn-lg">
+                    Re-open Voting
+                </button>
 
-            <p>
-                Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
-            </p>
+                <small class="form-text text-muted">
+                    This will re-open voting allowing players to change their votes. Note that since the game is already closed, players may have seen the correct answers. Any existing votes will be saved.
+                </small>
+            </form>
         </div>
 
         <div class="col-sm-8">
