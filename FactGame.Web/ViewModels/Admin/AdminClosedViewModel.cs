@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactGame.Web.Models
+namespace FactGame.Web.ViewModels
 {
     public class AdminClosedViewModel
     {
@@ -17,10 +17,14 @@ namespace FactGame.Web.Models
 
         public List<AdminClosedPlayerViewModel> Players { get; set; }
 
+        public AdminPlayerListViewModel PlayerList { get; set; }
+
         public AdminClosedViewModel()
         {
             Facts = new List<AdminClosedFactViewModel>();
             Players = new List<AdminClosedPlayerViewModel>();
+
+            PlayerList = new AdminPlayerListViewModel();
         }
     }
 

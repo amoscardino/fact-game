@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataAccess.Models;
-using FactGame.Web.Models;
+using FactGame.Web.ViewModels;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
@@ -55,9 +55,22 @@ namespace FactGame.Web.Controllers
             {
                 Name = game.Name,
                 GameID = game.ID,
-                AdminToken = game.AdminToken,
-                Players = game.Players
+                AdminToken = game.AdminToken
             };
+
+            vm.PlayerList.AllowRemoving = true;
+            vm.PlayerList.ShowScore = false;
+            vm.PlayerList.GameID = game.ID;
+            vm.PlayerList.AdminToken = game.AdminToken;
+            vm.PlayerList.Players.AddRange(game.Players
+                .Select(p => new AdminPlayerListPlayerViewModel
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    Symbol = p.Symbol,
+                    Color = p.Color,
+                    Score = p.Score
+                }));
 
             return View("AdminRegistering", vm);
         }
@@ -125,6 +138,18 @@ namespace FactGame.Web.Controllers
                 GameID = game.ID,
                 AdminToken = game.AdminToken
             };
+
+            vm.PlayerList.AllowRemoving = false;
+            vm.PlayerList.ShowScore = true;
+            vm.PlayerList.Players.AddRange(game.Players
+                .Select(p => new AdminPlayerListPlayerViewModel
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    Symbol = p.Symbol,
+                    Color = p.Color,
+                    Score = p.Score
+                }));
 
             vm.Facts = game.Players
                 .OrderBy(p => p.FactID)

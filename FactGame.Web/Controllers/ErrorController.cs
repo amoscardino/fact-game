@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using FactGame.Web.Models;
+using FactGame.Web.ViewModels;
 
 namespace FactGame.Web.Controllers
 {

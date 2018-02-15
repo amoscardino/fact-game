@@ -147,32 +147,5 @@
 <div class="container">
     <h2>Leaderboard</h2>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th class="text-right">Score</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var player in Model.Players.OrderByDescending(x => x.Score))
-            {
-                <tr>
-
-                    <td>
-                        <span class="mr-1" style="color: #@player.ColorCode">
-                            <i class="@player.Symbol fa-fw"></i>
-                        </span>
-
-                        @player.PlayerName
-                    </td>
-
-                    <td class="text-right">
-                        @player.Score.ToString("N2")
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @Html.Partial("_AdminPlayerList", Model.PlayerList)
 </div>

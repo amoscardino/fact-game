@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FactGame.Web.Models
+namespace FactGame.Web.ViewModels
 {
     public class AdminRegisteringViewModel
     {
@@ -12,6 +12,11 @@ namespace FactGame.Web.Models
 
         public string AdminToken { get; set; }
 
-        public IEnumerable<Player> Players { get; set; }
+        public AdminPlayerListViewModel PlayerList { get; set; }
+
+        public AdminRegisteringViewModel()
+        {
+            PlayerList = new AdminPlayerListViewModel();
+        }
     }
 }

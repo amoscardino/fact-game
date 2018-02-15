@@ -22,7 +22,7 @@
             Game Admin
         </h2>
 
-        @if (Model.Players.Count() > 3)
+        @if (Model.PlayerList.Players.Count > 3)
         {
             <form asp-controller="Admin"
                   asp-action="ChangeStatus"
@@ -86,49 +86,4 @@
 
 <h2>Players</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var player in Model.Players)
-        {
-            <tr>
-                <td>
-                    <span style="color: #@player.Color">
-                        <i class="@player.Symbol"></i>
-                    </span>
-
-                    @player.Name
-                </td>
-
-                <th class="text-right">
-                    <form asp-action="RemovePlayer"
-                          asp-controller="Admin"
-                          asp-route-id="@Model.GameID"
-                          asp-route-admintoken="@Model.AdminToken"
-                          asp-route-playerid="@player.ID"
-                          method="post">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            Remove
-                        </button>
-                    </form>
-                </th>
-            </tr>
-        }
-
-        @if (!Model.Players.Any())
-        {
-
-            <tr>
-                <td colspan="3" class="text-muted text-center">
-                    No players registered (yet)!
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@Html.Partial("_AdminPlayerList", Model.PlayerList)

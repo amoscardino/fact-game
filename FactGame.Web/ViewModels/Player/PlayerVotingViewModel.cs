@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactGame.Web.Models
+namespace FactGame.Web.ViewModels
 {
     public class PlayerVotingViewModel
     {

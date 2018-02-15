@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using FactGame.Web.DataAccess.Models;
-using FactGame.Web.Models;
+using FactGame.Web.ViewModels;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using FactGame.Web.DataAccess;

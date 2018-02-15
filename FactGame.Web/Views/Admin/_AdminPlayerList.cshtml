@@ -1,0 +1,69 @@
+﻿@model AdminPlayerListViewModel
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Player</th>
+
+            @if (Model.ShowScore)
+            {
+                <th class="text-right">
+                    Score
+                </th>
+            }
+
+            @if (Model.AllowRemoving)
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var player in Model.Players)
+        {
+            <tr>
+                <td>
+                    <span style="color: #@player.Color"
+                          class="d-inline-block mr-2">
+                        <i class="@player.Symbol fa-fw"></i>
+                    </span>
+
+                    @player.Name
+                </td>
+
+                @if (Model.ShowScore)
+                {
+                    <td class="text-right">
+                        @player.Score.ToString("N2")
+                    </td>
+                }
+
+                @if (Model.AllowRemoving)
+                {
+                    <th class="text-right">
+                        <form asp-action="RemovePlayer"
+                              asp-controller="Admin"
+                              asp-route-id="@Model.GameID"
+                              asp-route-admintoken="@Model.AdminToken"
+                              asp-route-playerid="@player.ID"
+                              method="post">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                Remove
+                            </button>
+                        </form>
+                    </th>
+                }
+            </tr>
+        }
+
+        @if (!Model.Players.Any())
+        {
+            <tr>
+                <td colspan="3" class="text-muted text-center">
+                    No players registered (yet)!
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

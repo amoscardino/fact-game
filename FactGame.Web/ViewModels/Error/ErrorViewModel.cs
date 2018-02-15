@@ -1,6 +1,6 @@
 using System;
 
-namespace FactGame.Web.Models
+namespace FactGame.Web.ViewModels
 {
     public class ErrorViewModel
     {
