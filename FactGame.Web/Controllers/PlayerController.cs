@@ -195,6 +195,8 @@ namespace FactGame.Web.Controllers
                 Response.Cookies.Append("FactGameGame" + model.GameID, player.ID, cookieOptions);
             }
 
+            TempData["fg-player-registered"] = true;
+
             return RedirectToAction("Index", "Player", new { id = model.GameID });
         }
         #endregion
@@ -218,6 +220,8 @@ namespace FactGame.Web.Controllers
                 .ToList();
 
             await _repo.UpdateGame(game);
+
+            TempData["fg-player-voted"] = true;
 
             return RedirectToAction("Index", "Player", new { id = model.GameID });
         }

@@ -8,6 +8,13 @@
     Welcome back! Voting has started. Make your guesses below and try to match each fact to each player. You can change your votes as much as you want until the game admin closes voting. Be sure to save!
 </p>
 
+@if (TempData["fg-player-voted"] != null && (bool)TempData["fg-player-voted"])
+{
+    <div class="alert alert-success" role="alert">
+        Your votes have been saved. You may update them freely until the game admin closes the game.
+    </div>
+}
+
 <form asp-controller="Player"
       asp-action="Vote"
       method="post">

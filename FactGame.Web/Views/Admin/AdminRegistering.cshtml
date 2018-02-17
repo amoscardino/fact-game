@@ -22,7 +22,7 @@
             Game Admin
         </h2>
 
-        @if (Model.PlayerList.Players.Count > 3)
+        @if (Model.PlayerList.Players.Count >= 3)
         {
             <form asp-controller="Admin"
                   asp-action="ChangeStatus"

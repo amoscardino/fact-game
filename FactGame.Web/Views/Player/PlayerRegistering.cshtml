@@ -17,6 +17,13 @@ else
     </p>
 }
 
+@if (TempData["fg-player-registered"] != null && (bool)TempData["fg-player-registered"])
+{
+    <div class="alert alert-success" role="alert">
+        Your information has been saved. You may update it freely until the game admin starts the voting stage.
+    </div>
+}
+
 <div class="row justify-content-center">
     <div class="col-sm-6">
         <form asp-controller="Player"
@@ -29,7 +36,6 @@ else
             </div>
 
             <div class="card-body">
-
                 <div class="form-group">
                     <label asp-for="Name"></label>
                     <input asp-for="Name" class="form-control" />
