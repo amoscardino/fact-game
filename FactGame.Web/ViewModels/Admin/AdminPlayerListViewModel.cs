@@ -22,6 +22,25 @@ namespace FactGame.Web.ViewModels
         {
             Players = new List<AdminPlayerListPlayerViewModel>();
         }
+
+        public AdminPlayerListViewModel(Game game, bool allowRemoving, bool showScore)
+        {
+            AllowRemoving = allowRemoving;
+            ShowScore = showScore;
+            GameID = game.ID;
+            AdminToken = game.AdminToken;
+            Players = game.Players
+                .OrderByDescending(p => p.Score)
+                .Select(p => new AdminPlayerListPlayerViewModel
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    Symbol = p.Symbol,
+                    Color = p.Color,
+                    Score = p.Score
+                })
+                .ToList();
+        }
     }
 
     public class AdminPlayerListPlayerViewModel

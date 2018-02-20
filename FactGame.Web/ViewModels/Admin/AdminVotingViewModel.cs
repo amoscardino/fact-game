@@ -13,55 +13,11 @@ namespace FactGame.Web.ViewModels
 
         public string AdminToken { get; set; }
 
-        public List<AdminVotingFactViewModel> Facts { get; set; }
-
-        public List<AdminVotingPlayerViewModel> Players { get; set; }
+        public AdminVoteGridViewModel VoteGrid { get; set; }
 
         public AdminVotingViewModel()
         {
-            Facts = new List<AdminVotingFactViewModel>();
-            Players = new List<AdminVotingPlayerViewModel>();
+            VoteGrid = new AdminVoteGridViewModel();
         }
-    }
-
-    public class AdminVotingFactViewModel
-    {
-        public string FactID { get; set; }
-
-        public string Fact { get; set; }
-
-        public List<AdminVotingPlayerViewModel> Players { get; set; }
-
-        public AdminVotingFactViewModel()
-        {
-            Players = new List<AdminVotingPlayerViewModel>();
-        }
-    }
-
-    public class AdminVotingPlayerViewModel
-    {
-        public string PlayerID { get; set; }
-
-        public string PlayerName { get; set; }
-
-        public string Symbol { get; set; }
-
-        public string ColorCode { get; set; }
-
-        public List<AdminVotingVoteViewModel> Votes { get; set; }
-
-        public AdminVotingPlayerViewModel()
-        {
-            Votes = new List<AdminVotingVoteViewModel>();
-        }
-    }
-
-    public class AdminVotingVoteViewModel
-    {
-        public string PlayerName { get; set; }
-
-        public string Symbol { get; set; }
-
-        public string ColorCode { get; set; }
     }
 }

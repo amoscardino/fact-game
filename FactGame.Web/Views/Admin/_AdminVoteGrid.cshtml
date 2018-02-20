@@ -1,0 +1,55 @@
+﻿@model AdminVoteGridViewModel
+
+<table class="table table-bordered @(Model.Facts.Count >= 10 ? "table-sm" : string.Empty)"
+       style="table-layout: fixed;">
+    <colgroup>
+        <col style="width: 15%;" />
+
+        @foreach (var player in Model.Facts)
+        {
+            <col style="width: auto;" />
+        }
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th></th>
+
+            @foreach (var player in Model.Facts.First().Players)
+            {
+                <th class="text-center align-bottom">
+                    @player.PlayerName
+                    <br />
+                    <span style="color: #@player.ColorCode" class="d-inline-block mt-1">
+                        <i class="@player.Symbol"></i>
+                    </span>
+                </th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var fact in Model.Facts)
+        {
+            <tr>
+                <th class="align-middle">
+                    @fact.Fact
+                </th>
+
+                @foreach (var player in fact.Players)
+                {
+                    var successClass = Model.ShowAnswers && player.PlayerID == fact.PlayerID ? "table-success" : string.Empty;
+
+                    <td class="text-center align-middle @successClass">
+                        @foreach (var vote in player.Votes)
+                        {
+                            <span style="color: #@vote.ColorCode" title="@vote.PlayerName">
+                                <i class="@vote.Symbol"></i>
+                            </span>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

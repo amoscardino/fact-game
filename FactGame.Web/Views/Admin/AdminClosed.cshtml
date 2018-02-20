@@ -82,66 +82,14 @@
     <h2>Scoring</h2>
 
     <p>
-        Each fact is worth a certain number of points, determined by the number of players in the game: @Model.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
+        Each fact is worth a certain number of points, determined by the number of players in the game: @Model.PlayerList.Players.Count for this game. For each fact, the number of points is split among the players who guessed it correctly. If no one guesses a player's fact, then that player gets the points.
     </p>
 
     <h2>Votes</h2>
 </div>
 
 <div class="container-fluid">
-    <table class="table table-bordered @(Model.Facts.Count >= 10 ? "table-sm" : string.Empty)"
-           style="table-layout: fixed;">
-        <colgroup>
-            <col style="width: 20%;" />
-
-            @foreach (var player in Model.Facts)
-            {
-                <col style="width: auto;" />
-            }
-        </colgroup>
-
-        <thead>
-            <tr>
-                <th></th>
-
-                @foreach (var player in Model.Facts.First().Players)
-                {
-                    <th class="text-center align-bottom">
-                        @player.PlayerName
-                        <br />
-                        <span style="color: #@player.ColorCode" class="d-inline-block mt-1">
-                            <i class="@player.Symbol"></i>
-                        </span>
-                    </th>
-                }
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var fact in Model.Facts)
-            {
-                <tr>
-                    <th class="align-middle">
-                        @fact.Fact
-                    </th>
-
-                    @foreach (var player in fact.Players)
-                    {
-                        var successClass = player.PlayerID == fact.PlayerID ? "table-success" : string.Empty;
-
-                        <td class="text-center align-middle @successClass">
-                            @foreach (var vote in player.Votes)
-                            {
-                                <span style="color: #@vote.ColorCode" title="@vote.PlayerName">
-                                    <i class="@vote.Symbol"></i>
-                                </span>
-                            }
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+    @Html.Partial("_AdminVoteGrid", Model.VoteGrid)
 </div>
 
 <div class="container">

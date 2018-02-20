@@ -55,22 +55,9 @@ namespace FactGame.Web.Controllers
             {
                 Name = game.Name,
                 GameID = game.ID,
-                AdminToken = game.AdminToken
+                AdminToken = game.AdminToken,
+                PlayerList = new AdminPlayerListViewModel(game, true, false)
             };
-
-            vm.PlayerList.AllowRemoving = true;
-            vm.PlayerList.ShowScore = false;
-            vm.PlayerList.GameID = game.ID;
-            vm.PlayerList.AdminToken = game.AdminToken;
-            vm.PlayerList.Players.AddRange(game.Players
-                .Select(p => new AdminPlayerListPlayerViewModel
-                {
-                    ID = p.ID,
-                    Name = p.Name,
-                    Symbol = p.Symbol,
-                    Color = p.Color,
-                    Score = p.Score
-                }));
 
             return View("AdminRegistering", vm);
         }
@@ -81,52 +68,10 @@ namespace FactGame.Web.Controllers
             {
                 Name = game.Name,
                 GameID = game.ID,
-                AdminToken = game.AdminToken
+                AdminToken = game.AdminToken,
+                VoteGrid = new AdminVoteGridViewModel(game, false)
             };
-
-            vm.Facts = game.Players
-                .OrderBy(p => p.FactID)
-                .Select(p => new AdminVotingFactViewModel
-                {
-                    Fact = p.Fact,
-                    FactID = p.FactID
-                })
-                .ToList();
-
-            vm.Players = game.Players
-                .OrderBy(p => p.Name)
-                .Select(p => new AdminVotingPlayerViewModel
-                {
-                    PlayerID = p.ID,
-                    PlayerName = p.Name,
-                    Symbol = p.Symbol,
-                    ColorCode = p.Color
-                })
-                .ToList();
-
-            foreach (var vmFact in vm.Facts)
-            {
-                vmFact.Players = game.Players
-                    .OrderBy(p => p.Name)
-                    .Select(p => new AdminVotingPlayerViewModel
-                    {
-                        PlayerID = p.ID,
-                        PlayerName = p.Name,
-                        Symbol = p.Symbol,
-                        ColorCode = p.Color,
-                        Votes = game.Players
-                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID == vmFact.FactID))
-                            .Select(q => new AdminVotingVoteViewModel
-                            {
-                                PlayerName = q.Name,
-                                Symbol = q.Symbol,
-                                ColorCode = q.Color
-                            })
-                            .ToList()
-                    })
-                    .ToList();
-            }
-
+            
             return View("AdminVoting", vm);
         }
 
@@ -136,65 +81,10 @@ namespace FactGame.Web.Controllers
             {
                 Name = game.Name,
                 GameID = game.ID,
-                AdminToken = game.AdminToken
+                AdminToken = game.AdminToken,
+                PlayerList = new AdminPlayerListViewModel(game, false, true),
+                VoteGrid = new AdminVoteGridViewModel(game, true)
             };
-
-            vm.PlayerList.AllowRemoving = false;
-            vm.PlayerList.ShowScore = true;
-            vm.PlayerList.Players.AddRange(game.Players
-                .Select(p => new AdminPlayerListPlayerViewModel
-                {
-                    ID = p.ID,
-                    Name = p.Name,
-                    Symbol = p.Symbol,
-                    Color = p.Color,
-                    Score = p.Score
-                }));
-
-            vm.Facts = game.Players
-                .OrderBy(p => p.FactID)
-                .Select(p => new AdminClosedFactViewModel
-                {
-                    Fact = p.Fact,
-                    FactID = p.FactID,
-                    PlayerID = p.ID
-                })
-                .ToList();
-
-            vm.Players = game.Players
-                .OrderBy(p => p.Name)
-                .Select(p => new AdminClosedPlayerViewModel
-                {
-                    PlayerID = p.ID,
-                    PlayerName = p.Name,
-                    Symbol = p.Symbol,
-                    ColorCode = p.Color,
-                    Score = p.Score
-                })
-                .ToList();
-
-            foreach (var vmFact in vm.Facts)
-            {
-                vmFact.Players = game.Players
-                    .OrderBy(p => p.Name)
-                    .Select(p => new AdminClosedPlayerViewModel
-                    {
-                        PlayerID = p.ID,
-                        PlayerName = p.Name,
-                        Symbol = p.Symbol,
-                        ColorCode = p.Color,
-                        Votes = game.Players
-                            .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID == vmFact.FactID))
-                            .Select(q => new AdminClosedVoteViewModel
-                            {
-                                PlayerName = q.Name,
-                                Symbol = q.Symbol,
-                                ColorCode = q.Color
-                            })
-                            .ToList()
-                    })
-                    .ToList();
-            }
 
             return View("AdminClosed", vm);
         }
@@ -219,7 +109,7 @@ namespace FactGame.Web.Controllers
 
         private void ScoreGame(Game game)
         {
-            var maxScore = game.Players.Count();
+            var maxScore = (decimal)game.Players.Count();
 
             // Reset any old scores first
             foreach (var player in game.Players)
