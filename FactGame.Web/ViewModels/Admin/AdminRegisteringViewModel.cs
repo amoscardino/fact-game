@@ -12,11 +12,11 @@ namespace FactGame.Web.ViewModels
 
         public string AdminToken { get; set; }
 
-        public AdminPlayerListViewModel PlayerList { get; set; }
+        public PlayerListViewModel PlayerList { get; set; }
 
         public AdminRegisteringViewModel()
         {
-            PlayerList = new AdminPlayerListViewModel();
+            PlayerList = new PlayerListViewModel();
         }
     }
 }

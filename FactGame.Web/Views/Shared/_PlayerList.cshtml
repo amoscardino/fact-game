@@ -1,4 +1,4 @@
-﻿@model AdminPlayerListViewModel
+﻿@model PlayerListViewModel
 
 <table class="table">
     <thead>
@@ -22,7 +22,9 @@
     <tbody>
         @foreach (var player in Model.Players)
         {
-            <tr>
+            var rowActiveClass = Model.CurrentPlayerID == player.ID ? "table-info" : "";
+
+            <tr class="@rowActiveClass">
                 <td>
                     <span style="color: #@player.Color"
                           class="d-inline-block mr-2">

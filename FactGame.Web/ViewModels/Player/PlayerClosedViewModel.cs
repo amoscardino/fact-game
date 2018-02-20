@@ -17,16 +17,21 @@ namespace FactGame.Web.ViewModels
 
         public List<PlayerClosedVoteViewModel> Votes { get; set; }
 
+        public PlayerListViewModel PlayerList { get; set; }
+
         public PlayerClosedViewModel()
         {
             FactGuessedByPlayerNames = new List<string>();
             Votes = new List<PlayerClosedVoteViewModel>();
+            PlayerList = new PlayerListViewModel();
         }
     }
 
     public class PlayerClosedVoteViewModel
     {
         public string Fact { get; set; }
+
+        public string FactID { get; set; }
 
         public string GuessPlayerName { get; set; }
 

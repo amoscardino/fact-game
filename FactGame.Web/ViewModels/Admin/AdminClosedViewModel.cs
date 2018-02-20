@@ -15,11 +15,11 @@ namespace FactGame.Web.ViewModels
 
         public AdminVoteGridViewModel VoteGrid { get; set; }
 
-        public AdminPlayerListViewModel PlayerList { get; set; }
+        public PlayerListViewModel PlayerList { get; set; }
 
         public AdminClosedViewModel()
         {
-            PlayerList = new AdminPlayerListViewModel();
+            PlayerList = new PlayerListViewModel();
             VoteGrid = new AdminVoteGridViewModel();
         }
     }

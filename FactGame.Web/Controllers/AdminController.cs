@@ -56,7 +56,7 @@ namespace FactGame.Web.Controllers
                 Name = game.Name,
                 GameID = game.ID,
                 AdminToken = game.AdminToken,
-                PlayerList = new AdminPlayerListViewModel(game, true, false)
+                PlayerList = new PlayerListViewModel(game, true, false)
             };
 
             return View("AdminRegistering", vm);
@@ -82,7 +82,7 @@ namespace FactGame.Web.Controllers
                 Name = game.Name,
                 GameID = game.ID,
                 AdminToken = game.AdminToken,
-                PlayerList = new AdminPlayerListViewModel(game, false, true),
+                PlayerList = new PlayerListViewModel(game, false, true),
                 VoteGrid = new AdminVoteGridViewModel(game, true)
             };
 

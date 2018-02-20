@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace FactGame.Web.ViewModels
 {
-    public class AdminPlayerListViewModel
+    public class PlayerListViewModel
     {
         public string GameID { get; set; }
 
         public string AdminToken { get; set; }
+
+        public string CurrentPlayerID { get; set; }
 
         public bool ShowScore { get; set; }
 
@@ -18,17 +20,18 @@ namespace FactGame.Web.ViewModels
 
         public List<AdminPlayerListPlayerViewModel> Players { get; private set; }
 
-        public AdminPlayerListViewModel()
+        public PlayerListViewModel()
         {
             Players = new List<AdminPlayerListPlayerViewModel>();
         }
 
-        public AdminPlayerListViewModel(Game game, bool allowRemoving, bool showScore)
+        public PlayerListViewModel(Game game, bool allowRemoving, bool showScore, string currentPlayerID = "")
         {
             AllowRemoving = allowRemoving;
             ShowScore = showScore;
             GameID = game.ID;
             AdminToken = game.AdminToken;
+            CurrentPlayerID = currentPlayerID ?? string.Empty;
             Players = game.Players
                 .OrderByDescending(p => p.Score)
                 .Select(p => new AdminPlayerListPlayerViewModel

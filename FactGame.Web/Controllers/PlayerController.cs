@@ -148,10 +148,25 @@ namespace FactGame.Web.Controllers
                         select new PlayerClosedVoteViewModel
                         {
                             Fact = ap.Fact,
+                            FactID = ap.FactID,
                             GuessPlayerName = gp.Name,
                             ActualPlayerName = ap.Name,
                             Correct = ap.ID == gp.ID
                         }).ToList();
+
+            // Add back any missing votes
+            vm.Votes.AddRange(from p in game.Players
+                              where !vm.Votes.Select(x => x.FactID).Contains(p.FactID)
+                              select new PlayerClosedVoteViewModel
+                              {
+                                  Fact = p.Fact,
+                                  FactID = p.FactID,
+                                  ActualPlayerName = p.Name,
+                                  GuessPlayerName = "(no guess)",
+                                  Correct = false
+                              });
+
+            vm.PlayerList = new PlayerListViewModel(game, false, true, playerId);
 
             return View("PlayerClosed", vm);
         }
