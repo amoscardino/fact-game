@@ -6,27 +6,27 @@ using System.Threading.Tasks;
 
 namespace FactGame.Web.ViewModels
 {
-    public class AdminVoteGridViewModel
+    public class VoteGridViewModel
     {
         public bool ShowAnswers { get; set; }
 
-        public List<AdminVoteGridPlayerViewModel> Players { get; set; }
+        public List<VoteGridPlayerViewModel> Players { get; set; }
 
-        public List<AdminVoteGridFactViewModel> Facts { get; set; }
+        public List<VoteGridFactViewModel> Facts { get; set; }
 
-        public AdminVoteGridViewModel()
+        public VoteGridViewModel()
         {
-            Players = new List<AdminVoteGridPlayerViewModel>();
-            Facts = new List<AdminVoteGridFactViewModel>();
+            Players = new List<VoteGridPlayerViewModel>();
+            Facts = new List<VoteGridFactViewModel>();
         }
 
-        public AdminVoteGridViewModel(Game game, bool showAnswers)
+        public VoteGridViewModel(Game game, bool showAnswers)
         {
             ShowAnswers = showAnswers;
 
             Facts = game.Players
                 .OrderBy(p => p.FactID)
-                .Select(p => new AdminVoteGridFactViewModel
+                .Select(p => new VoteGridFactViewModel
                 {
                     Fact = p.Fact,
                     FactID = p.FactID,
@@ -36,7 +36,7 @@ namespace FactGame.Web.ViewModels
 
             Players = game.Players
                 .OrderBy(p => p.Name)
-                .Select(p => new AdminVoteGridPlayerViewModel
+                .Select(p => new VoteGridPlayerViewModel
                 {
                     PlayerID = p.ID,
                     PlayerName = p.Name,
@@ -50,7 +50,7 @@ namespace FactGame.Web.ViewModels
             {
                 fact.Players = game.Players
                     .OrderBy(p => p.Name)
-                    .Select(p => new AdminVoteGridPlayerViewModel
+                    .Select(p => new VoteGridPlayerViewModel
                     {
                         PlayerID = p.ID,
                         PlayerName = p.Name,
@@ -59,7 +59,7 @@ namespace FactGame.Web.ViewModels
                         Votes = game.Players
                             .OrderBy(q => q.Name)
                             .Where(q => q.Votes.Any(x => x.GuessPlayerID == p.ID && x.FactID == fact.FactID))
-                            .Select(q => new AdminVoteGridVoteViewModel
+                            .Select(q => new VoteGridVoteViewModel
                             {
                                 PlayerName = q.Name,
                                 Symbol = q.Symbol,
@@ -72,7 +72,7 @@ namespace FactGame.Web.ViewModels
         }
     }
 
-    public class AdminVoteGridFactViewModel
+    public class VoteGridFactViewModel
     {
         public string PlayerID { get; set; }
 
@@ -80,15 +80,15 @@ namespace FactGame.Web.ViewModels
 
         public string Fact { get; set; }
 
-        public List<AdminVoteGridPlayerViewModel> Players { get; set; }
+        public List<VoteGridPlayerViewModel> Players { get; set; }
 
-        public AdminVoteGridFactViewModel()
+        public VoteGridFactViewModel()
         {
-            Players = new List<AdminVoteGridPlayerViewModel>();
+            Players = new List<VoteGridPlayerViewModel>();
         }
     }
 
-    public class AdminVoteGridPlayerViewModel
+    public class VoteGridPlayerViewModel
     {
         public string PlayerID { get; set; }
 
@@ -100,15 +100,15 @@ namespace FactGame.Web.ViewModels
 
         public decimal Score { get; set; }
 
-        public List<AdminVoteGridVoteViewModel> Votes { get; set; }
+        public List<VoteGridVoteViewModel> Votes { get; set; }
 
-        public AdminVoteGridPlayerViewModel()
+        public VoteGridPlayerViewModel()
         {
-            Votes = new List<AdminVoteGridVoteViewModel>();
+            Votes = new List<VoteGridVoteViewModel>();
         }
     }
 
-    public class AdminVoteGridVoteViewModel
+    public class VoteGridVoteViewModel
     {
         public string PlayerName { get; set; }
 

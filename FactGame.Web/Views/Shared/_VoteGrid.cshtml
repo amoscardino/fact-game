@@ -1,9 +1,10 @@
-﻿@model AdminVoteGridViewModel
+﻿@model VoteGridViewModel
 
-<table class="table table-bordered @(Model.Facts.Count >= 10 ? "table-sm" : string.Empty)"
+<table class="table table-bordered @(Model.Facts.Count >= 10 ? " table-sm" : string.Empty)"
        style="table-layout: fixed;">
     <colgroup>
-        <col style="width: 15%;" />
+        @* Fact column should be 1.5x normal column width *@
+        <col style="width: @((1d / Model.Facts.Count) * 150)%;" />
 
         @foreach (var player in Model.Facts)
         {
